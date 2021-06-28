@@ -190,8 +190,8 @@ const useStyles = makeStyles((theme) => ({
 
   }));
 
-const moment1 = moment();
-const moment2 = moment();
+const moment7 = moment();
+const moment8 = moment().add('90','days');
 export default function LandingPage () {
     const classes = useStyles();
 
@@ -249,7 +249,7 @@ export default function LandingPage () {
                 </div> 
                 <div className={classes.subtitleBox}>
                     <div className={classes.subtitleItem}>
-                    <Typography variant="subtitle1" >You cannot make progress without making decisions. You are only one decision from a totally different life. In the end, we only regret the chances we didn’t take and the decisions we waited to make. Today is {moment1.format('MMMM DD, YYYY')} If you decided to START the 90 Days PCM Journey NOW, on {moment2.add('90','days').format('MMMM DD, YYYY')} , You will finish the journey.</Typography>
+                    <Typography variant="subtitle1" >You cannot make progress without making decisions. You are only one decision from a totally different life. In the end, we only regret the chances we didn’t take and the decisions we waited to make. Today is {moment7.format('MMMM DD, YYYY')} If you decided to START the 90 Days PCM Journey NOW, on {moment8.format('MMMM DD, YYYY')} , You will finish the journey.</Typography>
                     </div>
                     <div className={classes.subtitleItem}>
                     <Typography variant="subtitle1" >It takes a level of self-love, of dedication and determination to live your greatest life. So, look within. Look at every area of your life and ask yourself these questions: Will I be on the journey? Will I improve my mentality, emotions and decision-making? Anything that is blocking that, anything that is preventing you from living your greatest life, make the tough decision to let it go.</Typography>

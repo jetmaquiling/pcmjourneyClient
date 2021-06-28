@@ -362,6 +362,9 @@ export default function Signup () {
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, FirstName: e.target.value})}
                                 type='email'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 fullWidth
                                 endAdornment={
                                 <InputAdornment position="end">
@@ -379,7 +382,9 @@ export default function Signup () {
                         <InputLabel  >Last Name</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, LastName: e.target.value})}
-                            
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type='text'
                                 fullWidth
                                 endAdornment={
@@ -418,7 +423,9 @@ export default function Signup () {
                                     setForm({...form, Contact: e.target.value})
                                 }}
                                 
-                                autoComplete='off'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type="tel"
                                 fullWidth
                                 endAdornment={
@@ -435,15 +442,17 @@ export default function Signup () {
             {/* Email Address **********************************************************/}
 
                 <div className={classes.formItem}>
-                    <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
+                    <FormControl  className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
                         <InputLabel >Email Address</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, Email: e.target.value})
                                 }}
-                                autoComplete='off'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type='email'
-                                fullWidth
+                                // fullWidth
                                 endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton edge="end">
@@ -464,7 +473,7 @@ export default function Signup () {
                                 onBlur={(e)=>{
                                     setForm({...form, Spouse: e.target.value})
                                 }}
-                                
+                                autoComplete={false}
                                 type='text'
                                 fullWidth
                                 endAdornment={
@@ -494,10 +503,10 @@ export default function Signup () {
                         <InputLabel  >Country</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, country: e.target.value})}
-                                autoComplete='off'
-                                type='address'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 fullWidth
-                                // autoComplete="country"
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton edge="end">
@@ -518,9 +527,10 @@ export default function Signup () {
                                 onBlur={(e)=>setForm({...form, address: e.target.value})}
                                 multiline
                                 rows={4}
-                                type='address'
                                 fullWidth
-                                autoComplete='off'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 // autoComplete="address-line1"
                                 endAdornment={
                                     <InputAdornment position="end">
@@ -539,9 +549,9 @@ export default function Signup () {
                         <InputLabel >Town/City</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, city: e.target.value})}
-                                autoComplete='off'
-                               
-                                type='address'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 fullWidth
                                 // autoComplete="address-level2"
                                 endAdornment={
@@ -561,8 +571,9 @@ export default function Signup () {
                         <InputLabel >Zip Code </InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, zip: e.target.value})}
-                                
-                                autoComplete='off'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type='address'
                                 fullWidth
                                 // autoComplete="postal-code"
@@ -588,8 +599,9 @@ export default function Signup () {
                                 onBlur={(e)=>{
                                     setForm({...form, Username: e.target.value})
                                 }}
-                               
-                                autoComplete='off'
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type='name'
                                 fullWidth
                                 endAdornment={
@@ -958,7 +970,9 @@ export default function Signup () {
                                 onBlur={(e)=>{
                                     setForm({...form, Password: e.target.value})
                                 }}
-                                
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type={showPassword ? 'text' : 'password'}
                                 fullWidth
                                 endAdornment={
@@ -986,7 +1000,9 @@ export default function Signup () {
                                 onBlur={(e)=>{
                                     setForm({...form, PasswordConfirm: e.target.value})
                                 }}
-                                
+                                inputProps={{
+                                    autoComplete: 'none',
+                                }}
                                 type={showPassword ? 'text' : 'password'}
                                 fullWidth
                                 endAdornment={
