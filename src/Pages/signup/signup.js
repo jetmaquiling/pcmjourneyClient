@@ -110,16 +110,21 @@ const useStyles = makeStyles((theme) => ({
   let new_date1 = moment();
   let new_date2 = moment();
   let new_date3 =moment();
+  let new_date4 =moment();
 
 export default function Signup () {
     const classes = useStyles();
-    const [load, setload] = React.useState(false);
-    const [success, setSuccess] = React.useState(false);
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [form, setForm] = React.useState({FirstName: '', LastName: '',Email: '', Spouse: '',Password: '',PasswordConfirm: '', Username: '',Purpose: '', BirthDate: null, Contact: "", Ranking: null, PCMSign: '',PersonalSignature: null , Trained: 'true',Programs: '', country: "",  address: '' , city:'', zip: '' , proof:'', dateproof: null, upline1: '', upline2: '' , upline3:'', Sponsor: '',PCMupline: '', Start: null , End: new_date2, PersonalSignPreview: null, PCMSignPreview: null,
-    });
+    
     const [checked, setChecked] = React.useState(false);
+    
+    const [form, setForm] = React.useState({FirstName: '', LastName: '',Email: '', Spouse: '',Password: '',PasswordConfirm: '', Username: '',Purpose: '', BirthDate: new_date1 , Contact: "", Ranking: null, PCMSign: '',PersonalSignature: null , Trained: 'true',Programs: '', country: "",  address: '' , city:'', zip: '' , proof:'', dateproof: new_date2, upline1: '', upline2: '' , upline3:'', Sponsor: '',PCMupline: '', Start: new_date3 , End: new_date4 , PersonalSignPreview: null, PCMSignPreview: null,
+    });
+
+    const [showPassword, setShowPassword] = React.useState(false);
+    const [load, setload] = React.useState(false);
     const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
+    const [success, setSuccess] = React.useState(false);
+
 
     React.useEffect(() => {
         let startDate = moment(form.Start);
@@ -132,13 +137,14 @@ export default function Signup () {
       };
 
     window.onbeforeunload = function() {
-        alert("Are You sure to exit?")
+        alert("Are You sure to exit? All your data will be erased.")
         //if we return nothing here (just calling return;) then there will be no pop-up question at all
         //return;
     };
 
 
     const handleToaster = (message, status) => {
+
         setToaster({open: true, message: message ,status:status});
       };
     
@@ -162,14 +168,34 @@ export default function Signup () {
 
     const SignUp = async (e)  =>  { 
         e.preventDefault()
-        // if (Object.values(form).every(x => x === null || x === '')){
-        //     return handleToaster("Please Fill up all the Form!","error");
-        // }
-        // if (form.Password !== form.PasswordConfirm){
-        //     return handleToaster("Your Password in not the same","error");
-        // }
+        let jwt = ""
+        if(form.FirstName.length <= 2 || form.LastName.length <= 2){
+            return handleToaster("Your Name is Invalid","error");
+        }
+
+        if(form.Contact.length <= 9){
+            return handleToaster("Your Contact Number is Invalid","error");
+        }
+
+        if(!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(form.Email))){
+            return handleToaster("Your Email is Invalid","error");
+        }
+
+        if(form.Username.length <= 5 || form.Ranking.length <= 2){
+            return handleToaster("Your PHB Account is Invalid","error");
+        }
+
+        if (form.Password.length <= 4  || form.Password !== form.PasswordConfirm){
+            return handleToaster("Your Password in not the same","error");
+        }
+
+        if (!checked){
+            return handleToaster("Please Agree to the Terms And Agreements","error");
+        }
+
+        setload(true)
         axios
-        .post('http://localhost:1337/auth/local/register', {
+        .post('https://walakajowabackend.herokuapp.com/auth/local/register', {
             firstName: form.FirstName,
             lastName: form.LastName,
             birthDate: form.BirthDate,
@@ -178,17 +204,15 @@ export default function Signup () {
             spouse: form.Spouse,
             address: `${form.address}, ${form.city}, ${form.zip}, ${form.country}`,
             username: form.Username,
-            referenceProof: form.proof,
-            dateproof: form.dateproof,
             Why: form.Purpose,
             startJourney: form.Start,
             endJourney: form.End,
-            password: "GodisGreater",
+            password: form.Password,
         })
         .then(response => {
-            
+            jwt = response.data.jwt
             axios
-                .post('http://localhost:1337/userconfirmations', {
+                .post('https://walakajowabackend.herokuapp.com/userconfirmations', {
                 firstReferencePurchase : form.proof,
                 referencePurchaseDate: form.dateproof,
                 presentRanking: form.Ranking,
@@ -201,36 +225,48 @@ export default function Signup () {
                 networkBuilderEvents: form.Programs ,
                 users_permissions_user: response.data.user
             }, {
-                headers: { Authorization: `Bearer ${response.data.jwt}` }
-            })
+                headers: { Authorization: `Bearer ${jwt}` }
 
-            const formData1 = new FormData()
-            formData1.append('files', form.PCMSignature);
-            formData1.append('ref','Userconfirmation')
-            formData1.append('refId', 1);
-            formData1.append('field', 'PCMSignature');
-            console.log(formData1,form.PCMSignature.name);
-            axios.post('http://localhost:1337/upload/', formData1, {
-                headers: { Authorization: `Bearer ${response.data.jwt}` }
-            })
+            }).then(res => {
+                console.log(res)
+                console.log(jwt)
+                const formData1 = new FormData()
+                formData1.append('files', form.PCMSignature);
+                formData1.append('ref','Userconfirmation')
+                formData1.append('refId', res.data.id);
+                formData1.append('field', 'PCMSignature');
+                console.log(formData1,form.PCMSignature.name);
+                axios.post('https://walakajowabackend.herokuapp.com/upload/', formData1, {
+                    headers: { Authorization: `Bearer ${jwt}` }
+                })
+    
+    
+                const formData2 = new FormData()
+                formData2.append('files', form.PersonalSignature);
+                formData2.append('ref','Userconfirmation')
+                formData2.append('refId', res.data.id);
+                formData2.append('field', 'PersonalSignature');
+                console.log(formData2,form.PersonalSignature.name)
+                axios.post('https://walakajowabackend.herokuapp.com/upload/',formData2, {
+                    headers: { Authorization: `Bearer ${jwt}` }
+                })
 
+                // setSuccess(true);
+                setload(false);
 
-            const formData2 = new FormData()
-            formData2.append('files', form.PersonalSignature);
-            formData2.append('ref','Userconfirmation')
-            formData2.append('refId', 1);
-            formData2.append('field', 'PersonalSignature');
-            console.log(formData2,form.PersonalSignature.name)
-            axios.post('http://localhost:1337/upload/',formData2, {
-                headers: { Authorization: `Bearer ${response.data.jwt}` }
-            })
-
+            }).catch(error => {
+            // Handle error.
+            console.log(error);
+            setload(false);
+            handleToaster("There is a problem with your Application!","warning");
+            
+            });
 
             // Handle success.
-            console.log('Well done!',response);
-            console.log('User profile', response.data.user);
-            console.log('User token', response.data.jwt);
-            //setSuccess(true);
+            // console.log('Well done!',response);
+            // console.log('User profile', response.data.user);
+            // console.log('User token', response.data.jwt);
+            
             
         })
         .catch(error => {
@@ -238,25 +274,35 @@ export default function Signup () {
             console.log(error);
             setload(false);
             handleToaster("There is a problem with your Application!","warning");
+            
         });
 
-
-
-
-        
-    
-    
-    }
-     
-    const UploadImage = async (e) =>  { 
-        
-        
        
-        
-        // console.log(res1)
-        // console.log(res)
-    }
 
+
+        
+    
+    
+    }
+    const Upload = () => {
+        const formData1 = new FormData()
+        formData1.append('files', form.PCMSignature);
+        formData1.append('ref','Userconfirmation')
+        formData1.append('refId', 5);
+        formData1.append('field', 'PCMSignature');
+        console.log(formData1,form.PCMSignature.name);
+        axios.post('http://localhost:1337/upload/', formData1)
+
+
+        const formData2 = new FormData()
+        formData2.append('files', form.PersonalSignature);
+        formData2.append('ref','Userconfirmation')
+        formData2.append('refId', 5);
+        formData2.append('field', 'PersonalSignature');
+        console.log(formData2,form.PersonalSignature.name)
+        axios.post('http://localhost:1337/upload/',formData2)
+
+    }
 
     return (
         <div className={classes.root}>
@@ -279,7 +325,6 @@ export default function Signup () {
                 <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                     PHBWORX INTERNATIONAL is processing your application.
-                    CONGRATIOLATIONS! You can now LogIn for PCM Journey.
                 </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -313,10 +358,9 @@ export default function Signup () {
                 {/* First Name **********************************************************/}
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >First Name</InputLabel>
+                        <InputLabel >First Name</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, FirstName: e.target.value})}
-                                id="filled-adornment-password"
                                 type='email'
                                 fullWidth
                                 endAdornment={
@@ -332,11 +376,10 @@ export default function Signup () {
             {/* Last Name **********************************************************/}
                 <div className={classes.formItem} >
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Last Name</InputLabel>
+                        <InputLabel  >Last Name</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, LastName: e.target.value})}
-                               
-                                id="filled-adornment-password"
+                            
                                 type='text'
                                 fullWidth
                                 endAdornment={
@@ -369,13 +412,13 @@ export default function Signup () {
             {/* CONTACT NUMBER **********************************************************/}
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Contact Number</InputLabel>
+                        <InputLabel  >Contact Number</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, Contact: e.target.value})
                                 }}
                                 
-                                id="filled-adornment-password"
+                                
                                 type="tel"
                                 fullWidth
                                 endAdornment={
@@ -393,12 +436,12 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Email Address</InputLabel>
+                        <InputLabel >Email Address</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, Email: e.target.value})
                                 }}
-                                id="filled-adornment-password"
+                               
                                 type='email'
                                 fullWidth
                                 endAdornment={
@@ -416,12 +459,12 @@ export default function Signup () {
 
             <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Spouse</InputLabel>
+                        <InputLabel  >Spouse</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, Spouse: e.target.value})
                                 }}
-                                id="filled-adornment-password"
+                                
                                 type='text'
                                 fullWidth
                                 endAdornment={
@@ -448,10 +491,10 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Country</InputLabel>
+                        <InputLabel  >Country</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, country: e.target.value})}
-                                id="filled-adornment-password"
+                               
                                 type='address'
                                 fullWidth
                                 autoComplete="country"
@@ -470,13 +513,13 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >House/Apartment, Street, Barangay</InputLabel>
+                        <InputLabel  >House/Apartment, Street, Barangay</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, address: e.target.value})}
                                 
                                 multiline
                                 rows={4}
-                                id="filled-adornment-password"
+                                
                                 type='address'
                                 fullWidth
                                 autoComplete="address-line1"
@@ -494,11 +537,11 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Town/City</InputLabel>
+                        <InputLabel >Town/City</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, city: e.target.value})}
                                 
-                                id="filled-adornment-password"
+                               
                                 type='address'
                                 fullWidth
                                 autoComplete="address-level2"
@@ -516,11 +559,11 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Zip Code </InputLabel>
+                        <InputLabel >Zip Code </InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, zip: e.target.value})}
                                 
-                                id="filled-adornment-password"
+                                
                                 type='address'
                                 fullWidth
                                 autoComplete="postal-code"
@@ -541,13 +584,13 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >PHB Account Username</InputLabel>
+                        <InputLabel >PHB Account Username</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, Username: e.target.value})
                                 }}
                                
-                                id="filled-adornment-password"
+                               
                                 type='name'
                                 fullWidth
                                 endAdornment={
@@ -590,13 +633,13 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >First Purchase/Activation Ref. No.</InputLabel>
+                        <InputLabel >First Purchase/Activation Ref. No.</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, proof: e.target.value})
                                 }}
                                 
-                                id="filled-adornment-password"
+                             
                                 type='name'
                                 fullWidth
                                 endAdornment={
@@ -636,7 +679,7 @@ export default function Signup () {
                 <Typography variant="h6" >Name Three Active Uplines</Typography>
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Upline #1</InputLabel>
+                        <InputLabel >Upline #1</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, upline1: e.target.value})
@@ -657,7 +700,7 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Upline #2</InputLabel>
+                        <InputLabel  >Upline #2</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, upline2: e.target.value})
@@ -678,7 +721,7 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Upline #3</InputLabel>
+                        <InputLabel  >Upline #3</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, upline3: e.target.value})
@@ -705,7 +748,7 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Sponsor's Username</InputLabel>
+                        <InputLabel >Sponsor's Username</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, Sponsor: e.target.value})
@@ -726,13 +769,13 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Nearest PCM Upline</InputLabel>
+                        <InputLabel  >Nearest PCM Upline</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
                                     setForm({...form, PCMupline: e.target.value})
                                 }}
                               
-                                id="filled-adornment-password"
+                              
                                 type='name'
                                 fullWidth
                                 endAdornment={
@@ -793,15 +836,12 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Why Are You Enrolling For PCM? </InputLabel>
+                        <InputLabel >Why Are You Enrolling For PCM? </InputLabel>
                             <OutlinedInput
-                                onBlur={(e)=>setForm({...form, Purpose: e.target.value})}
-                                
+                                onBlur={(e)=>setForm({...form, Purpose: e.target.value})}                     
                                 multiline
                                 rows={4}
-                                rowsMax={10}
-                                id="filled-adornment-password"
-                                type='password'
+                                rowsMax={15}                              
                                 fullWidth
                                 endAdornment={
                                 <InputAdornment position="end">
@@ -914,16 +954,23 @@ export default function Signup () {
                
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Password</InputLabel>
+                        <InputLabel  >Password</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
-                                    setForm({...form, upline3: e.target.value})
+                                    setForm({...form, Password: e.target.value})
                                 }}
                                 
-                                type='name'
+                                type={showPassword ? 'text' : 'password'}
                                 fullWidth
                                 endAdornment={
                                 <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    edge="end"
+                                    >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
                                     <IconButton edge="end">
                                         <HelpIcon style={{fontSize:'25px'}}/>
                                     </IconButton>
@@ -935,16 +982,23 @@ export default function Signup () {
 
                 <div className={classes.formItem}>
                     <FormControl className={clsx(classes.margin, classes.textField)} variant="filled" fullWidth>
-                        <InputLabel htmlFor="filled-adornment-password" >Confirm Password</InputLabel>
+                        <InputLabel>Confirm Password</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>{
-                                    setForm({...form, upline3: e.target.value})
+                                    setForm({...form, PasswordConfirm: e.target.value})
                                 }}
                                 
-                                type='name'
+                                type={showPassword ? 'text' : 'password'}
                                 fullWidth
                                 endAdornment={
                                 <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    edge="end"
+                                    >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
                                     <IconButton edge="end">
                                         <HelpIcon style={{fontSize:'25px'}}/>
                                     </IconButton>
@@ -991,7 +1045,7 @@ export default function Signup () {
 
                 <div className={classes.formItemButton}>
                             <Button variant="contained" fullWidth color="primary" className={classes.appButton} onClick={(e)=>{
-                            // setload(true)
+                            
                             SignUp(e);
                             }} >
                                     <Typography variant="h5" >Proceed</Typography>
