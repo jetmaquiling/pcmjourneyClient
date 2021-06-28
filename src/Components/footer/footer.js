@@ -19,14 +19,23 @@ import {AuthContext} from '../../Provider/context';
 
 const useStyles = makeStyles((theme) => ({
     main:{
+        margin: '300px 0px 0px 0px',
         height: '100vh',
         display: 'flex',
         backgroundImage: `url(${image})` ,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: "center",
         backgroundAttachment: 'fixed',
-        backgroundSize: 'cover' 
-    }
+        backgroundSize: 'cover' ,
+        justifyContent: 'center',
+        [theme.breakpoints.down('xs')]: {
+            margin: '200px 0px 0px 0px',
+          },
+    },
+    h2:{
+        color: theme.palette.secondary.main
+    },
+
   }));
   
 
@@ -38,7 +47,7 @@ export default function Footer () {
     return (
         <div className={classes.main}>
             <div className={classes.firstSection} >
-                
+                <Typography variant="h2" className={classes.h2} >LET'S GET PERSONAL</Typography>
             </div>
         </div>
     );
