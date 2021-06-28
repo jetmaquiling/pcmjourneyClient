@@ -418,7 +418,7 @@ export default function Signup () {
                                     setForm({...form, Contact: e.target.value})
                                 }}
                                 
-                                
+                                autoComplete='off'
                                 type="tel"
                                 fullWidth
                                 endAdornment={
@@ -441,7 +441,7 @@ export default function Signup () {
                                 onBlur={(e)=>{
                                     setForm({...form, Email: e.target.value})
                                 }}
-                               
+                                autoComplete='off'
                                 type='email'
                                 fullWidth
                                 endAdornment={
@@ -494,10 +494,10 @@ export default function Signup () {
                         <InputLabel  >Country</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, country: e.target.value})}
-                               
+                                autoComplete='off'
                                 type='address'
                                 fullWidth
-                                autoComplete="country"
+                                // autoComplete="country"
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton edge="end">
@@ -516,13 +516,12 @@ export default function Signup () {
                         <InputLabel  >House/Apartment, Street, Barangay</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, address: e.target.value})}
-                                
                                 multiline
                                 rows={4}
-                                
                                 type='address'
                                 fullWidth
-                                autoComplete="address-line1"
+                                autoComplete='off'
+                                // autoComplete="address-line1"
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton edge="end">
@@ -540,11 +539,11 @@ export default function Signup () {
                         <InputLabel >Town/City</InputLabel>
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, city: e.target.value})}
-                                
+                                autoComplete='off'
                                
                                 type='address'
                                 fullWidth
-                                autoComplete="address-level2"
+                                // autoComplete="address-level2"
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton edge="end">
@@ -563,10 +562,10 @@ export default function Signup () {
                             <OutlinedInput
                                 onBlur={(e)=>setForm({...form, zip: e.target.value})}
                                 
-                                
+                                autoComplete='off'
                                 type='address'
                                 fullWidth
-                                autoComplete="postal-code"
+                                // autoComplete="postal-code"
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton edge="end">
@@ -590,7 +589,7 @@ export default function Signup () {
                                     setForm({...form, Username: e.target.value})
                                 }}
                                
-                               
+                                autoComplete='off'
                                 type='name'
                                 fullWidth
                                 endAdornment={

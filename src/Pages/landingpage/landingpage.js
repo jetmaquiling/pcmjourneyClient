@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import animation from './style.module.css';
 import moment from 'moment';
-
+import PCMGold from '../../Resources/Images/PCMLOGO.png'
 // xs: 0,
 // sm: 600,
 // md: 1040,
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
         },     
     },
     secondSection:{
-        margin: '20px 0px 190px 0px'
+        margin: '20px 0px 120px 0px'
     },
     thirdSection:{
         margin: '20px 0px 190px 0px'
@@ -150,9 +150,14 @@ const useStyles = makeStyles((theme) => ({
     videoFrame:{
         width:"97rem" ,
         height:"47rem",
+        [theme.breakpoints.down('xs')]: {
+            width: "100%",
+            height: '200px'
+          },
         [theme.breakpoints.down('sm')]: {
             width: "100%",
           },
+          
         
     },
     line:{
@@ -173,6 +178,10 @@ const useStyles = makeStyles((theme) => ({
         margin: 'auto',
 
     },
+    logoImage:{
+        width: '300px',
+        margin: '0px auto 10px auto'
+    }
     
    
 
@@ -218,10 +227,12 @@ export default function LandingPage () {
                     <Typography variant="h6" >Chief Business Development Officer </Typography>
                 </div> 
                 <div className={classes.video} >
-                     <iframe className={classes.videoFrame}  src="https://www.youtube.com/embed/ayH5iV5zmrI" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen={true}></iframe>
+                     <iframe className={classes.videoFrame}  src="https://www.youtube.com/embed/RxOz7TI1b7s" title="YouTube video player" frameBorder="0"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen={true}></iframe>
                 </div>     
             </div>   
             <div className={classes.h5} >
+                    <img src={PCMGold} className={classes.logoImage} />
+                    
                     <Typography variant="h5" >EXPLORE THE PCM JOURNEY</Typography>
                 </div> 
             <div className={classes.thirdSection} >
