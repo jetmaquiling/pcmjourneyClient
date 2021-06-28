@@ -251,8 +251,8 @@ export default function Signup () {
                     headers: { Authorization: `Bearer ${jwt}` }
                 })
 
-                // setSuccess(true);
-                setload(false);
+                setSuccess(true);
+                // setload(false);
 
             }).catch(error => {
             // Handle error.
