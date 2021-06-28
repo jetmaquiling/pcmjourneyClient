@@ -37,9 +37,9 @@ function App() {
                 <Route path="/login">
                   <LogIn />
                 </Route>
-                <Route path="/dashboard" >
+                {/* <Route path="/dashboard" >
                 <Dashboard />
-                </Route>
+                </Route> */}
                 
                 <Route>
                   <LandingPage />

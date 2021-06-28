@@ -95,10 +95,18 @@ const useStyles = makeStyles((theme) => ({
     h2Box:{
         margin: '25px auto 50px auto ',
         textAlign: "center",
+        [theme.breakpoints.down('xs')]: {
+            margin: '25px 20px 20px 20px ',
+        },
     },
     h2:{
+        letterSpacing: "-0px",
+        fontWeight: 600,
         [theme.breakpoints.down('sm')]: {
             fontSize: '5rem',
+        },
+        [theme.breakpoints.down('xs')]: {
+            fontSize: '3rem',
         },
     },
     h4Box:{
@@ -111,9 +119,39 @@ const useStyles = makeStyles((theme) => ({
             width: "90%",
           },
     },
-    h4:{
+    h4num:{
         fontSize: '4.5rem',
-        textAlign: 'center'
+        textAlign: 'center',
+    },
+    h41:{
+        letterSpacing: "-2px",
+        color: 'rgb(15, 15, 15)',
+        fontSize: '4.5rem',
+        textAlign: 'center',
+        [theme.breakpoints.down('xs')]: {
+            letterSpacing: "-2x",
+            fontSize: '3rem',
+          },
+    },
+    h42:{
+        letterSpacing: "-2x",
+        color: "#EC113EB3",
+        fontSize: '4.5rem',
+        textAlign: 'center',
+        [theme.breakpoints.down('xs')]: {
+            letterSpacing: "-2x",
+            fontSize: '3rem',
+          },
+    },
+    h43:{
+        letterSpacing: "-2px",
+        color: '#d4af37d5',
+        fontSize: '4.5rem',
+        textAlign: 'center',
+        [theme.breakpoints.down('xs')]: {
+            letterSpacing: "-2x",
+            fontSize: '3rem',
+          },
     },
     h6Box:{
         width: "80rem",
@@ -127,7 +165,7 @@ const useStyles = makeStyles((theme) => ({
           },
     },
     h5:{
-        
+       
         width: "80rem",
         margin: 'auto auto 100px auto ',
         textAlign: "center",
@@ -160,7 +198,17 @@ const useStyles = makeStyles((theme) => ({
           
         
     },
-    line:{
+    line1:{
+        width: '0px',
+         height: '170px' ,
+         border: '1px solid rgb(15, 15, 15)' ,
+         opacity: 1,
+         margin: 'auto',
+         borderTopLeftRadius: '100%',
+         borderTopRightRadius: '100%',
+         
+    },
+    line2:{
         width: '0px',
          height: '170px' ,
          border: '1px solid #EC113EB3' ,
@@ -170,10 +218,37 @@ const useStyles = makeStyles((theme) => ({
          borderTopRightRadius: '100%',
          
     },
-    circle:{
+    line3:{
+        width: '0px',
+         height: '170px' ,
+         border: '1px solid #d4af37d5' ,
+         opacity: 1,
+         margin: 'auto',
+         borderTopLeftRadius: '100%',
+         borderTopRightRadius: '100%',
+         
+    },
+    
+    circle1:{
+        width: '59px',
+        height: '58px',
+        background: 'transparent linear-gradient(292deg, rgb(15, 15, 15) 0%, #F2E2E2 100%) 0% 0% no-repeat padding-box',
+        borderRadius: '50%',
+        margin: 'auto',
+
+    },
+    circle2:{
         width: '59px',
         height: '58px',
         background: 'transparent linear-gradient(292deg, #EC113E 0%, #F2E2E2 100%) 0% 0% no-repeat padding-box',
+        borderRadius: '50%',
+        margin: 'auto',
+
+    },
+    circle3:{
+        width: '59px',
+        height: '58px',
+        background: 'transparent linear-gradient(292deg, #d4af37d5 0%, #F2E2E2 100%) 0% 0% no-repeat padding-box',
         borderRadius: '50%',
         margin: 'auto',
 
@@ -237,15 +312,15 @@ export default function LandingPage () {
                 </div> 
             <div className={classes.thirdSection} >
                 
-                <div className={classes.line} />
-                <div className={classes.circle} >
-                    <Typography variant="h4" className={classes.h4} color="secondary"  >1</Typography>
+                <div className={classes.line1} />
+                <div className={classes.circle1} >
+                    <Typography variant="h4" className={classes.h4num} color="secondary"  >1</Typography>
                 </div>
                 <div className={classes.h4Box} >
-                    <Typography variant="h4" className={classes.h4} >Decide</Typography>
+                    <Typography variant="h4" className={classes.h41} >Decide</Typography>
                 </div> 
                 <div className={classes.h2Box} >
-                    <Typography variant="h2" className={classes.h2} >SUCCESS IS A DECISION</Typography>
+                    <Typography variant="h2" className={classes.h2} >Success Is A Decision</Typography>
                 </div> 
                 <div className={classes.subtitleBox}>
                     <div className={classes.subtitleItem}>
@@ -258,15 +333,15 @@ export default function LandingPage () {
             </div>
             <div className={classes.thirdSection} >
                 
-                <div className={classes.line} />
-                <div className={classes.circle} >
-                    <Typography variant="h4" className={classes.h4} color="secondary" >2</Typography>
+                <div className={classes.line2} />
+                <div className={classes.circle2} >
+                    <Typography variant="h4" className={classes.h4num} color="secondary" >2</Typography>
                 </div>
                 <div className={classes.h4Box} >
-                    <Typography variant="h4" className={classes.h4} >Learn</Typography>
+                    <Typography variant="h4" className={classes.h42} >Learn</Typography>
                 </div> 
                 <div className={classes.h2Box} >
-                    <Typography variant="h2" className={classes.h2}>BE A STUDENT OF SUCCESS</Typography>
+                    <Typography variant="h2" className={classes.h2}>Be A Student Of Success</Typography>
                 </div> 
                 <div className={classes.subtitleBox}>
                     <div className={classes.subtitleItem}>
@@ -278,15 +353,15 @@ export default function LandingPage () {
                 </div>
             </div>
             <div className={classes.thirdSection} >
-                <div className={classes.line} />
-                <div className={classes.circle} >
-                    <Typography variant="h4" className={classes.h4} color="secondary"  >3</Typography>
+                <div className={classes.line3} />
+                <div className={classes.circle3} >
+                    <Typography variant="h4" className={classes.h4num} color="secondary"  >3</Typography>
                 </div>
                 <div className={classes.h4Box} >
-                    <Typography variant="h4"  className={classes.h4}>SUCCEED</Typography>
+                    <Typography variant="h4"  className={classes.h43}>Succeed</Typography>
                 </div> 
                 <div className={classes.h2Box} >
-                    <Typography variant="h2" className={classes.h2}>UNLOCKING THE SUCCES IN YOU</Typography>
+                    <Typography variant="h2" className={classes.h2}>Unlocking The Success In You</Typography>
                 </div> 
                 <div className={classes.subtitleBox}>
                     <div className={classes.subtitleItem}>
