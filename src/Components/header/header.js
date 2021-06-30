@@ -60,7 +60,7 @@ export default function Header (){
                       About
                   </Button>
               </Link>
-              <Link to='/dashboard'>
+              <Link to='/contact'>
                   <Button color={"#000"} className={classes.appButton}>
                       Contact
                   </Button>

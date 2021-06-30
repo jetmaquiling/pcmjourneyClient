@@ -97,7 +97,7 @@ export default function Login () {
                 <div className={classes.formItemButton}>
                     
                             <Button variant="contained" fullWidth color="primary" className={classes.appButton} 
-                            onClick={ctx.login(form.email,form.password)} >
+                            onClick={ctx.logIn(form.email,form.password)} >
                                     <Typography variant="h5" >Continue</Typography>
                                     <ArrowForwardIcon style={{fontSize: '30px'}}/>
                             </Button>

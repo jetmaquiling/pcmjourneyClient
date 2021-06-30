@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -17,7 +17,6 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
-import CardMedia from '@material-ui/core/CardMedia';
 import Card from '@material-ui/core/Card';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { KeyboardDatePicker } from "@material-ui/pickers";
@@ -27,7 +26,6 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
-import FileBase64 from 'react-file-base64';
 import moment from 'moment';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
@@ -38,7 +36,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Prompt } from 'react-router'
-import { FormatBoldTwoTone } from '@material-ui/icons';
+import config from '../../Config/config.json';
+import {AuthContext} from '../../Provider/context';
+ 
+
 
 
 function Alert(props) {
@@ -114,16 +115,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Signup () {
     const classes = useStyles();
-    
-    const [checked, setChecked] = React.useState(false);
-    
-    const [form, setForm] = React.useState({FirstName: '', LastName: '',Email: '', Spouse: '',Password: '',PasswordConfirm: '', Username: '',Purpose: '', BirthDate: new_date1 , Contact: "", Ranking: null, PCMSign: '',PersonalSignature: null , Trained: 'true',Programs: '', country: "",  address: '' , city:'', zip: '' , proof:'', dateproof: new_date2, upline1: '', upline2: '' , upline3:'', Sponsor: '',PCMupline: '', Start: new_date3 , End: new_date4 , PersonalSignPreview: null, PCMSignPreview: null,
-    });
+    const ctx = useContext(AuthContext);
 
+    
+    const [form, setForm] = React.useState({FirstName: '', LastName: '',Email: '', Spouse: '',Password: '',PasswordConfirm: '', Username: '',Purpose: '', BirthDate: new_date1 , Contact: "", Ranking: null, ProfilePicture: '', ProfilePicturePreview: '',PersonalSignature: null , Trained: 'true',Programs: '', country: "",  address: '' , city:'', zip: '' , proof:'', dateproof: new_date2, upline1: '', upline2: '' , upline3:'', Sponsor: '',PCMupline: '', Start: new_date3 , End: new_date4 , PersonalSignPreview: null, PCMSignPreview: null,
+    });
+    
+    // const [checked, setChecked] = React.useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
-    const [load, setload] = React.useState(false);
-    const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
-    const [success, setSuccess] = React.useState(false);
+    // const [load, setload] = React.useState(false);
+    // const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
+    // const [success, setSuccess] = React.useState(false);
 
 
     React.useEffect(() => {
@@ -143,20 +145,11 @@ export default function Signup () {
     };
 
 
-    const handleToaster = (message, status) => {
-
-        setToaster({open: true, message: message ,status:status});
-      };
+    // const handleToaster = (message, status) => {
+    //     setToaster({open: true, message: message ,status:status});
+    //   };
     
-      const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-          return setToaster({open:false, message: '', status: ''});
-        }
-    
-        setToaster({open:false, message: '', status: ''});
-      };
-    
-      
+     
     function setCookie(cname, cvalue, exdays) {
         const d = new Date();
         d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -166,158 +159,20 @@ export default function Signup () {
 
     
 
-    const SignUp = async (e)  =>  { 
-        e.preventDefault()
-        let jwt = ""
-        if(form.FirstName.length <= 2 || form.LastName.length <= 2){
-            return handleToaster("Your Name is Invalid","error");
-        }
-
-        if(form.Contact.length <= 9){
-            return handleToaster("Your Contact Number is Invalid","error");
-        }
-
-        if(!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(form.Email))){
-            return handleToaster("Your Email is Invalid","error");
-        }
-
-        if(form.Username.length <= 5 || form.Ranking.length <= 2){
-            return handleToaster("Your PHB Account is Invalid","error");
-        }
-
-        if (form.Password.length <= 4  || form.Password !== form.PasswordConfirm){
-            return handleToaster("Your Password in not the same","error");
-        }
-
-        if (!checked){
-            return handleToaster("Please Agree to the Terms And Agreements","error");
-        }
-
-        setload(true)
-        axios
-        .post('https://walakajowabackend.herokuapp.com/auth/local/register', {
-            firstName: form.FirstName,
-            lastName: form.LastName,
-            birthDate: form.BirthDate,
-            contact: form.Contact,
-            email: form.Email,
-            spouse: form.Spouse,
-            address: `${form.address}, ${form.city}, ${form.zip}, ${form.country}`,
-            username: form.Username,
-            Why: form.Purpose,
-            startJourney: form.Start,
-            endJourney: form.End,
-            password: form.Password,
-        })
-        .then(response => {
-            jwt = response.data.jwt
-            axios
-                .post('https://walakajowabackend.herokuapp.com/userconfirmations', {
-                firstReferencePurchase : form.proof,
-                referencePurchaseDate: form.dateproof,
-                presentRanking: form.Ranking,
-                PCMUpline: form.PCMupline,
-                Sponsor: form.Sponsor,
-                ranking: form.Ranking,
-                username: form.Username,
-                active3Uplines: `${form.upline1}, ${form.upline2}, ${form.upline3}`,
-                experiencedNetBuilder: (form.Trained === 'true' ? true : false),
-                networkBuilderEvents: form.Programs ,
-                users_permissions_user: response.data.user
-            }, {
-                headers: { Authorization: `Bearer ${jwt}` }
-
-            }).then(res => {
-                console.log(res)
-                console.log(jwt)
-                const formData1 = new FormData()
-                formData1.append('files', form.PCMSignature);
-                formData1.append('ref','Userconfirmation')
-                formData1.append('refId', res.data.id);
-                formData1.append('field', 'PCMSignature');
-                console.log(formData1,form.PCMSignature.name);
-                axios.post('https://walakajowabackend.herokuapp.com/upload/', formData1, {
-                    headers: { Authorization: `Bearer ${jwt}` }
-                })
-    
-    
-                const formData2 = new FormData()
-                formData2.append('files', form.PersonalSignature);
-                formData2.append('ref','Userconfirmation')
-                formData2.append('refId', res.data.id);
-                formData2.append('field', 'PersonalSignature');
-                console.log(formData2,form.PersonalSignature.name)
-                axios.post('https://walakajowabackend.herokuapp.com/upload/',formData2, {
-                    headers: { Authorization: `Bearer ${jwt}` }
-                })
-
-                setSuccess(true);
-                // setload(false);
-
-            }).catch(error => {
-            // Handle error.
-            console.log(error);
-            setload(false);
-            handleToaster("There is a problem with your Application!","warning");
-            
-            });
-
-            // Handle success.
-            // console.log('Well done!',response);
-            // console.log('User profile', response.data.user);
-            // console.log('User token', response.data.jwt);
-            
-            
-        })
-        .catch(error => {
-            // Handle error.
-            console.log(error);
-            setload(false);
-            handleToaster("There is a problem with your Application!","warning");
-            
-        });
-
-       
-
-
-        
-    
-    
-    }
-    const Upload = () => {
-        const formData1 = new FormData()
-        formData1.append('files', form.PCMSignature);
-        formData1.append('ref','Userconfirmation')
-        formData1.append('refId', 5);
-        formData1.append('field', 'PCMSignature');
-        console.log(formData1,form.PCMSignature.name);
-        axios.post('http://localhost:1337/upload/', formData1)
-
-
-        const formData2 = new FormData()
-        formData2.append('files', form.PersonalSignature);
-        formData2.append('ref','Userconfirmation')
-        formData2.append('refId', 5);
-        formData2.append('field', 'PersonalSignature');
-        console.log(formData2,form.PersonalSignature.name)
-        axios.post('http://localhost:1337/upload/',formData2)
-
-    }
-
     return (
         <div className={classes.root}>
             <Prompt
                 // when={shouldBlockNavigation}
                 message='You have unsaved changes, are you sure you want to leave?'
                 />
-            <Snackbar open={toaster.open} autoHideDuration={9000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity={toaster.status}>
-                {toaster.message}
+            <Snackbar open={ctx.toaster.open} autoHideDuration={9000} onClose={ctx.handleClose}>
+            <Alert onClose={ctx.handleClose} severity={ctx.toaster.status}>
+                {ctx.toaster.message}
             </Alert>
             </Snackbar>
             <Dialog
                 style={{zIndex: 9999}}
-                open={success}
+                open={ctx.success}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -333,7 +188,7 @@ export default function Signup () {
                 </Button>
                 </DialogActions>
             </Dialog>
-            <Backdrop style={{zIndex: 9998}} className={classes.backdrop} open={load} >
+            <Backdrop style={{zIndex: 9998}} className={classes.backdrop} open={ctx.load} >
                 <CircularProgress color="inherit" />
             </Backdrop>
 
@@ -638,6 +493,42 @@ export default function Signup () {
                     </IconButton>
                 </div>
 
+                <div className={classes.formItem} style={{textAlign:'center'}}>
+                    <Card>
+                         <Typography variant="h6" style={{textAlign: 'center'}} >Send Us Your Picture
+                            <IconButton >
+                                {
+                                form.ProfilePicture ? 
+                                <ReplayIcon style={{fontSize:'25px'}} onClick={()=>{setForm({...form, ProfilePicturePreview: null, ProfilePicture: null})}}/> : 
+                                <HelpIcon style={{fontSize:'25px'}} />
+                                }
+                        
+                            </IconButton>
+                            </Typography>
+
+                            {!form.ProfilePicture && 
+                                <input
+                                type="file"
+                                multiple={ false }
+                                onChange={(e) => {
+                                    
+                                    const objectUrl = URL.createObjectURL(e.target.files[0]);
+                                    setForm({...form, ProfilePicturePreview: objectUrl, ProfilePicture: e.target.files[0] });
+                                    console.log(objectUrl)
+                                    URL.revokeObjectURL(e.target.files[0])
+                    
+
+                                    }}
+                                />}
+                         
+                    </Card>
+                </div>
+                <div className={classes.formItem} style={{display: (form.ProfilePicturePreview? 'block' : 'none')}}>
+                    <Card  style={{borderRadius: '50%'}}>  
+                        <img style={{height: '50%', width: '100%', }} src={form.ProfilePicturePreview} />
+                    </Card>
+                </div>
+
             {/* Proof of Activation **********************************************************/}
 
             <Typography variant="h6" className={classes.h6} >Proof of Activation</Typography>
@@ -753,7 +644,7 @@ export default function Signup () {
 
         {/* Authorization **********************************************************/}
 
-        <Typography variant="h6" className={classes.h6} >Upline Authorization</Typography>
+        <Typography variant="h6" className={classes.h6} >Nearest Upline/PCM Acknowledgement</Typography>
 
         {/* Nearest Upline **********************************************************/}
 
@@ -833,7 +724,7 @@ export default function Signup () {
                 </div>
                 <div className={classes.formItem} style={{display: (form.PCMSignPreview? 'block' : 'none')}}>
                     <Card>  
-                        <img style={{height: '200px', width: '100%'}} src={form.PCMSignPreview} />
+                        <img style={{height: '50%', width: '100%'}} src={form.PCMSignPreview} />
                     </Card>
                 </div>
 
@@ -957,7 +848,7 @@ export default function Signup () {
                 </div>
                 <div className={classes.formItem} style={{display: (form.PersonalSignPreview? 'block' : 'none')}}>
                     <Card>  
-                        <img style={{height: '200px', width: '100%'}} src={form.PersonalSignPreview} />
+                        <img style={{height: '50%', width: '100%'}} src={form.PersonalSignPreview} />
                     </Card>
                 </div>
 
@@ -1038,8 +929,8 @@ export default function Signup () {
                            
                             control={
                             <Checkbox
-                                checked={checked}
-                                onChange={(e)=> setChecked(!checked)}
+                                checked={ctx.checked}
+                                onChange={(e)=> ctx.setChecked(!ctx.checked)}
                                 color="primary"
                             />
                             }/>
@@ -1060,8 +951,7 @@ export default function Signup () {
 
                 <div className={classes.formItemButton}>
                             <Button variant="contained" fullWidth color="primary" className={classes.appButton} onClick={(e)=>{
-                            
-                            SignUp(e);
+                            ctx.signUp(form);
                             }} >
                                     <Typography variant="h5" >Proceed</Typography>
                                     <ArrowForwardIcon style={{fontSize: '30px'}}/>

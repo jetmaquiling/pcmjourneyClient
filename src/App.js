@@ -17,7 +17,7 @@ import LogIn from './Pages/login/login';
 
 import Header from './Components/header/header';
 import Footer from './Components/footer/footer';
-
+import Contact from './Pages/contact/contact';
 
 
 function App() {
@@ -36,6 +36,9 @@ function App() {
                 </Route>
                 <Route path="/login">
                   <LogIn />
+                </Route >
+                <Route path="/contact">
+                  <Contact />
                 </Route>
                 {/* <Route path="/dashboard" >
                 <Dashboard />

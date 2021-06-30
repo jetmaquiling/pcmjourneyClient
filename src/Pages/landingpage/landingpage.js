@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import animation from './style.module.css';
 import moment from 'moment';
 import PCMGold from '../../Resources/Images/PCMLOGO.png'
+import Contact from '../../Pages/contact/contact'
 // xs: 0,
 // sm: 600,
 // md: 1040,
@@ -372,6 +373,8 @@ export default function LandingPage () {
                     </div>
                 </div>
             </div>
+
+            <Contact/>
 
 
 

@@ -1,21 +1,73 @@
 import * as React from 'react';
 import axios from 'axios';
+import config from '../Config/config.json'
 
+
+
+
+
+
+
+////////////////////////////////////////////////////////
 
 export const AuthContext = React.createContext({
     token: '',
     isLoggedIn: false,
-    login: (email,password)=> {console.log("TRUE")},
+    logIn: (email,password)=> {},
+    signUp: (form)=> {},
+    success: null,
+    setSuccess: ()=> {},
+    checked: null,
+    setChecked: ()=> {},
+    load: null,
+    setLoad: ()=> {},
+    toaster: {},
+    setToaster:  ()=> {},
+    handleToaster: (message, status) => {},
+    handleClose: (event, reason) => {},
 });
 
 
-
+////////////////////////////////////////////////////////
 
 function AuthContextProvider(props) {
+
+    //MAIN COOKIE STORE
     const [auth, setAuth] = React.useState({
         token: '',
         isLoggedIn:false,
     });
+
+    const [load, setLoad] = React.useState(false);
+    const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
+    const [success, setSuccess] = React.useState(false);
+    const [checked, setChecked] = React.useState(false);
+
+
+
+    //LOG IN PERSIST
+
+
+
+
+    //TOASTER FUNCTION
+    const handleToaster = (message, status) => {
+      setToaster({open: true, message: message ,status:status});
+    };
+
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return setToaster({open:false, message: '', status: ''});
+      }
+  
+      setToaster({open:false, message: '', status: ''});
+    };
+  
+    
+
+    
+
+    //COOKIES FUNCTION ***********************************************
 
     function getCookie(cname) {
         let name = cname + "=";
@@ -40,9 +92,14 @@ function AuthContextProvider(props) {
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
       }
 
-    
+     // ***********************************************
 
-    const login = (email,password) => async () => { 
+
+
+
+  //LOG IN SYSTEM ***********************************************************************************
+
+    const logIn = (email,password) => async () => { 
         console.log("Requsting LogIn")
         try{
             const {data} = await axios.post('https://walakajowabackend.herokuapp.com/auth/local', {
@@ -63,26 +120,140 @@ function AuthContextProvider(props) {
     
     }
 
-    const SignUp = (email,password) => async () => { 
-      console.log("Requsting register")
-      try{
-          const {data} = await axios.post('https://walakajowabackend.herokuapp.com/auth/local/register', {
-              identifier: email,
-              password: password,
+    //SIGN UP SYSTEM ***********************************************************************************
+
+    const signUp = async (form)  =>  { 
+      console.log(`${config.SERVER_URL}/auth/local/register`)
+      console.log("WHAT A LOVELY DAY TO SERVE THE LORD!!!!!!!!!!")
+
+      // let jwt = ""
+      if(form.FirstName.length <= 2 || form.LastName.length <= 2){
+          return handleToaster("Your Name is Invalid","warning");
+      }
+      if(form.Contact.length <= 9){
+          return handleToaster("Your Contact Number is Invalid","warning");
+      }
+      if(!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(form.Email))){
+          return handleToaster("Your Email is Invalid","warning");
+      }
+      if(form.Username.length <= 5 || form.Ranking.length <= 2){
+          return handleToaster("Your PHB Account is Invalid","warning");
+      }
+      if (form.Password.length <= 4  || form.Password !== form.PasswordConfirm){
+          return handleToaster("Your Password in not the same","warning");
+      }
+      if (!checked){
+          return handleToaster("Please Agree to the Terms And Agreements","error");
+      }
+      setLoad(true)
+      axios.post(`${config.SERVER_URL}/auth/local/register`, {
+          firstName: form.FirstName,
+          lastName: form.LastName,
+          birthDate: form.BirthDate,
+          contact: form.Contact,
+          email: form.Email,
+          spouse: form.Spouse,
+          address: `${form.address}, ${form.city}, ${form.zip}, ${form.country}`,
+          username: form.Username,
+          Why: form.Purpose,
+          startJourney: form.Start,
+          endJourney: form.End,
+          password: form.Password,
+
+      }).then(response => {
+          //REGISTRATION SUCCESS RESPONSE
+          // jwt = response.data.jwt
+          
+
+          axios
+              .post(`${config.SERVER_URL}/userconfirmations`, {
+              firstReferencePurchase : form.proof,
+              referencePurchaseDate: form.dateproof,
+              presentRanking: form.Ranking,
+              PCMUpline: form.PCMupline,
+              Sponsor: form.Sponsor,
+              ranking: form.Ranking,
+              username: form.Username,
+              active3Uplines: `${form.upline1}, ${form.upline2}, ${form.upline3}`,
+              experiencedNetBuilder: (form.Trained === 'true' ? true : false),
+              networkBuilderEvents: form.Programs ,
+              users_permissions_user: response.data.user
+          }, {
+              headers: { Authorization: `Bearer ${response.data.jwt}` }
+
+          }).then(res => {
+              //AUTHENTICATION SUCCESS RESPONSE
+              
+              //UPLOADING IMAGE IN SERVER
+              if(form.PCMSignature){
+                const formData1 = new FormData()
+                formData1.append('files', form.PCMSignature);
+                formData1.append('ref','Userconfirmation')
+                formData1.append('refId', res.data.id);
+                formData1.append('field', 'PCMSignature');
+                console.log(formData1,form.PCMSignature.name);
+                axios.post(`${config.SERVER_URL}/upload/`, formData1, {
+                    headers: { Authorization: `Bearer ${response.data.jwt}` }
+                })
+              }
+              if(form.PersonalSignature){
+                //UPLOADING IMAGE IN SERVER
+                const formData2 = new FormData()
+                formData2.append('files', form.PersonalSignature);
+                formData2.append('ref','Userconfirmation')
+                formData2.append('refId', res.data.id);
+                formData2.append('field', 'PersonalSignature');
+                console.log(formData2,form.PersonalSignature.name)
+                axios.post(`${config.SERVER_URL}/upload/`,formData2, {
+                    headers: { Authorization: `Bearer ${response.data.jwt}` }
+                })
+              }
+              if(form.ProfilePicture){
+                const formData3 = new FormData()
+                formData3.append('files', form.ProfilePicture);
+                formData3.append('ref', 'user');
+                formData3.append('source', 'users-permissions');
+                formData3.append('refId', response.data.user.id);
+                formData3.append('field', 'ProfilePicture');
+                console.log(formData3,form.ProfilePicture.name)
+                axios.post(`${config.SERVER_URL}/upload/`,formData3, {
+                    headers: { Authorization: `Bearer ${response.data.jwt}` }
+                })
+              }
+             
+
+            //UPLOADING Profile IMAGE IN SERVER
+              
+              
+
+              setSuccess(true);
+
+          }).catch(error => {
+          // Handle error.
+          setLoad(false);
+          handleToaster("Sorry. We are having a Problem Authentication You!","warning");
+          
           });
 
+          // Handle success.
+          // console.log('Well done!',response);
+          // console.log('User profile', response.data.user);
+          // console.log('User token', response.data.jwt);
+          
+      })
+      .catch(error => {
+          //REGISTRATION FAILURE RESPONSE
+          console.log(error);
+          setLoad(false);
+          handleToaster("There is a problem with your Application!","warning");
+          
+      });
 
-          const json = await data;
-          setAuth({token:json.jwt, isLoggedIn: true});
-          setCookie('token',json.jwt,7);
-          setCookie('isLoggedIn','true',7);
-          console.log('success register', email ,password, json.jwt);
-
-      }catch(error){
-          console.log(error.message)
-      }
-  
   }
+
+
+
+
 
 
 
@@ -90,7 +261,18 @@ function AuthContextProvider(props) {
     value={{
         token: auth.token,
         isLoggedIn: auth.isLoggedIn,
-        login: login
+        logIn: logIn,
+        signUp: signUp,
+        success: success,
+        setSuccess: setSuccess,
+        checked: checked,
+        setChecked: setChecked,
+        load: load,
+        setLoad: setLoad,
+        toaster: toaster,
+        setToaster: setToaster,
+        handleToaster: handleToaster,
+        handleClose: handleClose,
     }}
     
   >
