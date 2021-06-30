@@ -116,17 +116,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Signup () {
     const classes = useStyles();
     const ctx = useContext(AuthContext);
-
-    
     const [form, setForm] = React.useState({FirstName: '', LastName: '',Email: '', Spouse: '',Password: '',PasswordConfirm: '', Username: '',Purpose: '', BirthDate: new_date1 , Contact: "", Ranking: null, ProfilePicture: '', ProfilePicturePreview: '',PersonalSignature: null , Trained: 'true',Programs: '', country: "",  address: '' , city:'', zip: '' , proof:'', dateproof: new_date2, upline1: '', upline2: '' , upline3:'', Sponsor: '',PCMupline: '', Start: new_date3 , End: new_date4 , PersonalSignPreview: null, PCMSignPreview: null,
     });
     
-    // const [checked, setChecked] = React.useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
-    // const [load, setload] = React.useState(false);
-    // const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
-    // const [success, setSuccess] = React.useState(false);
-
+    
 
     React.useEffect(() => {
         let startDate = moment(form.Start);
@@ -207,7 +201,7 @@ export default function Signup () {
                     tabIndex={-1}
                     style={{fontSize: '15px'}}
                 >
-                    Welcome to the PCM Journey!
+                   Welcome to the PCM Journey!
                     <br/>
                     <br/>
                     PCM Journey builds technologies and services that enable people to connect with each other, build communities, and grow businesses. These Terms govern your use of PCM Journey, eBuddy.ph, and the other products, features, apps, services, technologies, and software we offer (the PHBWorx Products or Products), except where we expressly state that separate terms (and not these) apply. These Products are provided to you by PHBWorx International, Inc.
