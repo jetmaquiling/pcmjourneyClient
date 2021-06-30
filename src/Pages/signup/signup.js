@@ -165,11 +165,13 @@ export default function Signup () {
                 // when={shouldBlockNavigation}
                 message='You have unsaved changes, are you sure you want to leave?'
                 />
+
             <Snackbar open={ctx.toaster.open} autoHideDuration={9000} onClose={ctx.handleClose}>
             <Alert onClose={ctx.handleClose} severity={ctx.toaster.status}>
                 {ctx.toaster.message}
             </Alert>
             </Snackbar>
+
             <Dialog
                 style={{zIndex: 9999}}
                 open={ctx.success}
@@ -188,9 +190,61 @@ export default function Signup () {
                 </Button>
                 </DialogActions>
             </Dialog>
+
             <Backdrop style={{zIndex: 9998}} className={classes.backdrop} open={ctx.load} >
                 <CircularProgress color="inherit" />
             </Backdrop>
+
+            <Dialog
+                open={ctx.terms}
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+            >
+                <DialogTitle id="scroll-dialog-title">Terms and Policies</DialogTitle>
+                <DialogContent >
+                <DialogContentText
+                    id="scroll-dialog-description"
+                    tabIndex={-1}
+                    style={{fontSize: '15px'}}
+                >
+                    Welcome to the PCM Journey!
+                    <br/>
+                    <br/>
+                    PCM Journey builds technologies and services that enable people to connect with each other, build communities, and grow businesses. These Terms govern your use of PCM Journey, eBuddy.ph, and the other products, features, apps, services, technologies, and software we offer (the PHBWorx Products or Products), except where we expressly state that separate terms (and not these) apply. These Products are provided to you by PHBWorx International, Inc.
+                    <br/>
+                    <br/>
+                    We don’t charge you to use the PCM Journey App or the other products and services covered by these Terms.
+                     By using our Products, you agree that we can show you products that we think will be relevant to you and your interests. We use your personal data to help determine which task to show you.
+                    <br/>
+                    <br/>
+                    We don’t sell your personal data to anyone, and we don’t share information that directly identifies you (such as your name, email address or other contact information) unless you give us specific permission. Instead, advertisers can tell us things like the kind of audience they want to see their ads, and we show those ads to people who may be interested. We provide advertisers with reports about the performance of their ads that help them understand how people are interacting with their content. See Section 2 below to learn more. 
+                    <br/>
+                    <br/>
+                    Our mission is to give people the power to build community and bring the people closer together. To help advance this mission, we provide the Products and services described below to you:
+                    <br/>
+                    1 Provide a personalized experience for you.
+                    <br/>
+                    2 Connect you with people and organizations you care about.
+                    <br/>
+                    3 Empower you to express yourself and communicate about what matters to you.
+                    <br/>
+                    4 Help you discover content, products, and services that may interest you.
+                    <br/>
+                    5 Combat harmful conduct and protect and support our community.
+
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={()=>ctx.setTerms(false)} color="primary">
+                    Cancel
+                </Button>
+                <Button onClick={()=> {
+                    ctx.setTerms(false);
+                    ctx.setChecked(true)}} color="primary">
+                    Agree
+                </Button>
+                </DialogActions>
+            </Dialog>
 
             <div className={classes.backBox} >
                 <Link to='/'>
@@ -930,13 +984,20 @@ export default function Signup () {
                             control={
                             <Checkbox
                                 checked={ctx.checked}
-                                onChange={(e)=> ctx.setChecked(!ctx.checked)}
+                                onClick={()=>{
+                                    if(ctx.checked){
+                                        ctx.setChecked(false)
+                                    }else{
+                                        ctx.setTerms(true)
+                                    }
+                                    
+                                }}
                                 color="primary"
                             />
                             }/>
                     </div>
                     <div style={{width: '80%' ,display: 'inline-block'}}>
-                        <Typography variant="caption" >I agree to the <a href="https://pcmjourney.com">Privacy Policy, Terms And Conditions</a> of <a href="https://phb2020.com">
+                        <Typography variant="caption" >I agree to the Privacy Policy, Terms And Conditions of <a href="https://phb2020.com">
                         PHBWorx International</a>, <a href="https://ebuddy.ph">ebuddy.ph</a> and <a href="https://pcmjourney.com">PCM Journey.</a></Typography>
                     </div>
 

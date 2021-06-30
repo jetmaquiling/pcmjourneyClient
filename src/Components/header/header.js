@@ -5,6 +5,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import {Link} from 'react-router-dom';
 import PCMBlack from '../../Resources/Images/PCM Black.png'
+import DehazeIcon from '@material-ui/icons/Dehaze';
+import IconButton from '@material-ui/core/IconButton';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -24,10 +27,17 @@ const useStyles = makeStyles((theme) => ({
     display:'flex',
     justifyContent: 'space-between',
     [theme.breakpoints.down('xs')]: {
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       
     },
     
+  },
+  navButton:{
+    display: 'none',
+    [theme.breakpoints.down('xs')]: {
+      display: 'block',
+      
+    },
   },
   flexItem:{
 
@@ -75,6 +85,9 @@ export default function Header (){
                       Sign Up
                   </Button>
               </Link>
+                <IconButton className={classes.navButton}>
+                    <DehazeIcon style={{fontSize:'40px'}} />
+                </IconButton>
             </div>
               
           </Toolbar>

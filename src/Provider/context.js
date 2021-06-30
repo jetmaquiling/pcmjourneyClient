@@ -21,6 +21,8 @@ export const AuthContext = React.createContext({
     setChecked: ()=> {},
     load: null,
     setLoad: ()=> {},
+    terms: null,
+    setTerms: ()=> {},
     toaster: {},
     setToaster:  ()=> {},
     handleToaster: (message, status) => {},
@@ -38,6 +40,7 @@ function AuthContextProvider(props) {
         isLoggedIn:false,
     });
 
+    const [terms, setTerms] = React.useState(false);
     const [load, setLoad] = React.useState(false);
     const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
     const [success, setSuccess] = React.useState(false);
@@ -268,6 +271,8 @@ function AuthContextProvider(props) {
         checked: checked,
         setChecked: setChecked,
         load: load,
+        terms: terms,
+        setTerms: setTerms,
         setLoad: setLoad,
         toaster: toaster,
         setToaster: setToaster,
