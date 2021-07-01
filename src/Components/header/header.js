@@ -59,9 +59,9 @@ export default function Header (){
           <Toolbar className={classes.flexBox} >
 
             <div>
-              <Link to="/">
+              <a href="/">
                 <img src={PCMBlack} className={classes.logoImage}/>
-              </Link>
+              </a>
             </div>
 
             <div>

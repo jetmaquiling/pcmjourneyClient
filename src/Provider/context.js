@@ -162,6 +162,8 @@ function AuthContextProvider(props) {
           startJourney: form.Start,
           endJourney: form.End,
           password: form.Password,
+          confirmed: false,
+          blocked: true,
 
       }).then(response => {
           //REGISTRATION SUCCESS RESPONSE
