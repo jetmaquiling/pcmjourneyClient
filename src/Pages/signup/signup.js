@@ -159,13 +159,6 @@ export default function Signup () {
                 // when={shouldBlockNavigation}
                 message='You have unsaved changes, are you sure you want to leave?'
                 />
-
-            <Snackbar open={ctx.toaster.open} autoHideDuration={9000} onClose={ctx.handleClose}>
-            <Alert onClose={ctx.handleClose} severity={ctx.toaster.status}>
-                {ctx.toaster.message}
-            </Alert>
-            </Snackbar>
-
             <Dialog
                 style={{zIndex: 9999}}
                 open={ctx.success}
@@ -562,7 +555,7 @@ export default function Signup () {
                                     
                                     const objectUrl = URL.createObjectURL(e.target.files[0]);
                                     setForm({...form, ProfilePicturePreview: objectUrl, ProfilePicture: e.target.files[0] });
-                                    console.log(objectUrl)
+                                    // console.log(objectUrl)
                                     URL.revokeObjectURL(e.target.files[0])
                     
 
@@ -761,7 +754,7 @@ export default function Signup () {
                                 onChange={(e) => {
                                     const objectUrl = URL.createObjectURL(e.target.files[0]);
                                     setForm({...form, PCMSignPreview: objectUrl, PCMSignature: e.target.files[0] });
-                                    console.log(objectUrl)
+                                    // console.log(objectUrl)
                                     URL.revokeObjectURL(e.target.files[0])
                                     // setForm({...form, Sign: e.target.files[0]})
 
@@ -849,7 +842,7 @@ export default function Signup () {
                         style={{width: "86%", display: 'inline-block'}}
                     />
                     <IconButton style={{width: "14%" ,display: 'inline-block'}}>
-                            <HelpIcon style={{fontSize:'25px'}} onClick={()=> console.log(form)}/>
+                            <HelpIcon style={{fontSize:'25px'}} />
                     </IconButton>
                     
                 </div> 
@@ -885,7 +878,7 @@ export default function Signup () {
                                     // setForm({...form, PersonalSignature: e.target.files[0]});
                                     const objectUrl = URL.createObjectURL(e.target.files[0]);
                                     setForm({...form, PersonalSignPreview: objectUrl, PersonalSignature: e.target.files[0] });
-                                    console.log(objectUrl)
+                                    // console.log(objectUrl)
                                     URL.revokeObjectURL(e.target.files[0])
                                     // setForm({...form, Sign: e.target.files[0]})
 

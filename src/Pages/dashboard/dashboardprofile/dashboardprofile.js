@@ -7,10 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import ProfilePic from './wallaper.png';
 import HelpIcon from '@material-ui/icons/Help';
 import IconButton from '@material-ui/core/IconButton';
-
 const useStyles = makeStyles((theme) => ({
     paperBox:{
-        margin: '80px 30px 0px 30px',
+        padding: '80px 30px 0px 30px',
         [theme.breakpoints.down('sm')]: {
             margin: '80px 10px 0px 10px',
         },

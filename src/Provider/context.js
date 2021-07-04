@@ -1,7 +1,8 @@
 import * as React from 'react';
 import axios from 'axios';
 import config from '../Config/config.json'
-
+import { useHistory } from "react-router-dom";
+import { LaptopWindows } from '@material-ui/icons';
 
 
 
@@ -11,9 +12,8 @@ import config from '../Config/config.json'
 ////////////////////////////////////////////////////////
 
 export const AuthContext = React.createContext({
-    token: '',
-    isLoggedIn: false,
     logIn: (email,password)=> {},
+    logOut: () => {},
     signUp: (form)=> {},
     success: null,
     setSuccess: ()=> {},
@@ -25,36 +25,64 @@ export const AuthContext = React.createContext({
     setTerms: ()=> {},
     toaster: {},
     setToaster:  ()=> {},
+    modal: {},
+    setModal:  ()=> {},
     handleToaster: (message, status) => {},
     handleClose: (event, reason) => {},
+    loggedIn: null,
+    user: {},
+    
 });
 
 
 ////////////////////////////////////////////////////////
 
 function AuthContextProvider(props) {
-
     //MAIN COOKIE STORE
-    const [auth, setAuth] = React.useState({
-        token: '',
-        isLoggedIn:false,
-    });
-
+    const [user, setUser] = React.useState({id:""});
+    const [loggedIn, setLoggedIn] = React.useState(false);
     const [terms, setTerms] = React.useState(false);
     const [load, setLoad] = React.useState(false);
     const [toaster, setToaster] = React.useState({open:false, message: '', status: ''});
     const [success, setSuccess] = React.useState(false);
     const [checked, setChecked] = React.useState(false);
-
-
+    const [modal, setModal] = React.useState({open: false, title: '', message: '', function: ()=> {}});
 
     //LOG IN PERSIST
 
 
+    React.useEffect(() => {
 
+      async function persist(jwt) { 
+        //console.log("Persisting Log")
+          const {data} = await axios.get(`${config.SERVER_URL}/users/${getCookie('id')}`, {
+            headers: { Authorization: `Bearer ${jwt}` }
+            });
+  
+  
+          const json = await data;
+          // setCookie('token',json.jwt,7);
+          setCookie('isLoggedIn','true',7);
+          // console.log('success LogIn', data);
+          setUser(data)
+          setUser({...data, ProfilePicture : data.ProfilePicture.url})
+          //console.log(json)
+          // console.log('success LogIn', json.user);
+  
+      }
 
+      if(getCookie('isLoggedIn') === "true" ){
+        //console.log(getCookie('token'));
+        setLoggedIn(true);
+        persist(getCookie('token'));
+      }
+      
+    },[]);
+   
+
+    
     //TOASTER FUNCTION
-    const handleToaster = (message, status) => {
+    const handleToaster = (message, status = "error") => {
       setToaster({open: true, message: message ,status:status});
     };
 
@@ -66,7 +94,9 @@ function AuthContextProvider(props) {
       setToaster({open:false, message: '', status: ''});
     };
   
-    
+    // Confirmation MODAL********************************************************
+
+
 
     
 
@@ -103,31 +133,52 @@ function AuthContextProvider(props) {
   //LOG IN SYSTEM ***********************************************************************************
 
     const logIn = (email,password) => async () => { 
-        console.log("Requsting LogIn")
+        setLoad(true)
         try{
-            const {data} = await axios.post('https://walakajowabackend.herokuapp.com/auth/local', {
+            const {data} = await axios.post(`${config.SERVER_URL}/auth/local`, {
                 identifier: email,
                 password: password,
             });
 
 
             const json = await data;
-            setAuth({token:json.jwt, isLoggedIn: true});
             setCookie('token',json.jwt,7);
+            setCookie('id',json.user.id,7);
             setCookie('isLoggedIn','true',7);
-            console.log('success LogIn', email ,password, json.jwt);
+            // console.log('success LogIn', json);
+            setUser(json.user)
+            setLoggedIn(true)
+            window.location.replace("/dashboard")
+            setLoad(false)
+            // console.log('success LogIn', json.user);
+            
 
         }catch(error){
-            console.log(error.message)
+            setLoad(false)
+            handleToaster("Your Credentials Are Incorrect!" ,'error')
+            // console.log(error.message)
         }
     
     }
 
+
+    //LOG OUT SYSTEM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      const logOut = () => { 
+        //console.log("Requsting SignOut")
+        setCookie('token','',0);
+        setCookie('id','',0);
+        setCookie('isLoggedIn','false',0);
+        window.location.replace("/")
+    
+    }
+     
+
+
     //SIGN UP SYSTEM ***********************************************************************************
 
     const signUp = async (form)  =>  { 
-      console.log(`${config.SERVER_URL}/auth/local/register`)
-      console.log("WHAT A LOVELY DAY TO SERVE THE LORD!!!!!!!!!!")
+      //console.log(`${config.SERVER_URL}/auth/local/register`)
 
       // let jwt = ""
       if(form.FirstName.length <= 2 || form.LastName.length <= 2){
@@ -162,8 +213,6 @@ function AuthContextProvider(props) {
           startJourney: form.Start,
           endJourney: form.End,
           password: form.Password,
-          confirmed: false,
-          blocked: true,
 
       }).then(response => {
           //REGISTRATION SUCCESS RESPONSE
@@ -196,7 +245,7 @@ function AuthContextProvider(props) {
                 formData1.append('ref','Userconfirmation')
                 formData1.append('refId', res.data.id);
                 formData1.append('field', 'PCMSignature');
-                console.log(formData1,form.PCMSignature.name);
+                //console.log(formData1,form.PCMSignature.name);
                 axios.post(`${config.SERVER_URL}/upload/`, formData1, {
                     headers: { Authorization: `Bearer ${response.data.jwt}` }
                 })
@@ -208,7 +257,7 @@ function AuthContextProvider(props) {
                 formData2.append('ref','Userconfirmation')
                 formData2.append('refId', res.data.id);
                 formData2.append('field', 'PersonalSignature');
-                console.log(formData2,form.PersonalSignature.name)
+                //console.log(formData2,form.PersonalSignature.name)
                 axios.post(`${config.SERVER_URL}/upload/`,formData2, {
                     headers: { Authorization: `Bearer ${response.data.jwt}` }
                 })
@@ -220,7 +269,7 @@ function AuthContextProvider(props) {
                 formData3.append('source', 'users-permissions');
                 formData3.append('refId', response.data.user.id);
                 formData3.append('field', 'ProfilePicture');
-                console.log(formData3,form.ProfilePicture.name)
+                //console.log(formData3,form.ProfilePicture.name)
                 axios.post(`${config.SERVER_URL}/upload/`,formData3, {
                     headers: { Authorization: `Bearer ${response.data.jwt}` }
                 })
@@ -256,6 +305,9 @@ function AuthContextProvider(props) {
 
   }
 
+  
+
+
 
 
 
@@ -264,9 +316,10 @@ function AuthContextProvider(props) {
 
   return <AuthContext.Provider 
     value={{
-        token: auth.token,
-        isLoggedIn: auth.isLoggedIn,
+        user: user,
+        loggedIn: loggedIn,
         logIn: logIn,
+        logOut: logOut,
         signUp: signUp,
         success: success,
         setSuccess: setSuccess,
@@ -280,6 +333,9 @@ function AuthContextProvider(props) {
         setToaster: setToaster,
         handleToaster: handleToaster,
         handleClose: handleClose,
+        modal: modal,
+        setModal:  setModal,
+        getCookie: getCookie,
     }}
     
   >
