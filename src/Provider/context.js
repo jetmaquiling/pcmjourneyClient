@@ -187,6 +187,9 @@ function AuthContextProvider(props) {
       if(form.Contact.length <= 9){
           return handleToaster("Your Contact Number is Invalid","warning");
       }
+      if (!form.ProfilePicture.name){
+        return handleToaster("You Don't Have Any Profile Picture! ","error");
+      }
       if(!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(form.Email))){
           return handleToaster("Your Email is Invalid","warning");
       }
@@ -199,6 +202,7 @@ function AuthContextProvider(props) {
       if (!checked){
           return handleToaster("Please Agree to the Terms And Agreements","error");
       }
+     
       setLoad(true)
       axios.post(`${config.SERVER_URL}/auth/local/register`, {
           firstName: form.FirstName,
@@ -262,7 +266,6 @@ function AuthContextProvider(props) {
                     headers: { Authorization: `Bearer ${response.data.jwt}` }
                 })
               }
-              if(form.ProfilePicture){
                 const formData3 = new FormData()
                 formData3.append('files', form.ProfilePicture);
                 formData3.append('ref', 'user');
@@ -272,15 +275,16 @@ function AuthContextProvider(props) {
                 //console.log(formData3,form.ProfilePicture.name)
                 axios.post(`${config.SERVER_URL}/upload/`,formData3, {
                     headers: { Authorization: `Bearer ${response.data.jwt}` }
+                }).then(res => {
+                  setSuccess(true);
                 })
-              }
              
 
             //UPLOADING Profile IMAGE IN SERVER
               
               
 
-              setSuccess(true);
+              
 
           }).catch(error => {
           // Handle error.
